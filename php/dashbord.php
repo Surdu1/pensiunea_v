@@ -1,8 +1,10 @@
 <?php
-require_once 'database.php';
+require_once 'firestore.php';
+require_once 'link.php';
+$db = new firebaseRDB($databaseURL);
 session_start();
-if(isset($_SESSION['username'])){
-
+if(!isset($_SESSION['username'])){
+  header("Location: /");
 }
 ?>
 <!DOCTYPE html>
@@ -37,27 +39,23 @@ if(isset($_SESSION['username'])){
         </form>
         <div class="afiseaza">
           <?php
-                    $sql = "SELECT * FROM pret_normal";
-                    $stmt = $pdo -> prepare($sql);
-                    $stmt -> execute();
-                    $data = $stmt -> fetchAll();
-                    if($data){
-                    echo "<div class='normal'>";
-                    echo "<h1>Pret normal</h1>";
-                    echo "<p>Pret pensiune/zi: ". $data[0]["cabana"] ."</p>";
-                    echo "<p>Pret camera/zi: ". $data[0]["camera"] ."</p>";
-                    echo "</div>";
-                    }
-          $sql = "SELECT * FROM preturi";
-          $stmt = $pdo -> prepare($sql);
-          $stmt -> execute();
-          $data = $stmt -> fetchAll();
+          $data = $db -> retrieve('pret_normal');
+          $data = json_decode($data,1);
+          if($data){
+          echo "<div class='normal'>";
+          echo "<h1>Pret normal</h1>";
+          echo "<p>Pret pensiune/zi: ". $data["cabana"] ."</p>";
+          echo "<p>Pret camera/zi: ". $data["camera"] ."</p>";
+          echo "</div>";
+          }
+          $data = $db -> retrieve('pret_special');
+          $data = json_decode($data,1);
           if($data){
           echo "<div class='special'>";
           echo "<h1>Pret perioada speciala</h1>";
-          echo "<p>Perioada: ". $data[0]["inceput"] ."/". $data[0]["final"] ."</p>";
-          echo "<p>Pensiune/zi: ". $data[0]["cabana"] ."</p>";
-          echo "<p>Camera/zi: ". $data[0]["camera"] ."</p>";
+          echo "<p>Perioada: ". $data["inceput"] ."/". $data["final"] ."</p>";
+          echo "<p>Pensiune/zi: ". $data["cabana"] ."</p>";
+          echo "<p>Camera/zi: ". $data["camera"] ."</p>";
           echo "<a href='/php/delete_pret.php'><button type='button'>Sterge pretul special</button></a>";
           echo "</div>";
           }

@@ -92,6 +92,8 @@ function Inainte(){
     index = actual_index;
 }
 
+setInterval(()=>{Inainte()},5000)
+
 var pret = document.getElementById('pret');
 var d = new Date()
 var vr = d.getFullYear();
@@ -161,14 +163,14 @@ function calculeaza(){
             percamera = (obc.daysInside * myObiect.camera_special * pers) + (obc.daysOutside * myObiect.camera * pers);
             }
             else{
-                percamera = ((obc.daysInside * myObiect.cabana) + (obc.daysOutside * myObiect.cabana_special)) * pers;
+                percamera = ((obc.daysInside * myObiect.cabana_special) + (obc.daysOutside * myObiect.cabana));
             }
         }
         else if(obc.daysInside == 0 && obc.daysOutside > 0){
             if(pers < 6){
             percamera = (obc.daysOutside * myObiect.camera) * pers;
             }else{
-                percamera = (obc.daysOutside * myObiect.cabana) * pers;
+                percamera = (obc.daysOutside * myObiect.cabana);
             }
         }
         else if(obc.daysOutside == 0 && obc.daysInside > 0){
@@ -176,7 +178,7 @@ function calculeaza(){
                 percamera = (obc.daysInside * myObiect.camera_special) * pers
             }
             else{
-                percamera = (obc.daysInside * myObiect.cabana_special) * pers
+                percamera = (obc.daysInside * myObiect.cabana_special)
             }
         }
             let perzi = document.createElement('div');

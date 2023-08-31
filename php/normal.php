@@ -1,14 +1,11 @@
 <?php
-require_once 'database.php';
-if($_SERVER['REQUEST_METHOD'] == 'POST'){
+require_once 'firestore.php';
+require_once 'link.php';
+$db = new firebaseRDB($databaseURL);
+if($_SERVER['REQUEST_METHOD'] == 'POST' && isset($_SESSION['username'])){
     $cabana = $_POST["cab"];
     $camera = $_POST["cam"];
-    $sql = "DELETE FROM pret_normal";
-    $stmt= $pdo->prepare($sql);
-    $stmt->execute();
-    $sql = "INSERT INTO pret_normal (camera, cabana) VALUES (?,?)";
-    $stmt= $pdo->prepare($sql);
-    $stmt->execute([$camera,$cabana]);
+    $db -> delete("pret_normal");
     header("Location: /");
 }
 ?>

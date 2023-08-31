@@ -3,23 +3,16 @@ session_start();
 if($_SERVER['REQUEST_METHOD'] == "POST" && !isset($_SESSION['username'])){
     $username = $_POST['username'];
     $password = $_POST['password'];
-    try{
-        require_once './database.php';
-        $query = "SELECT password FROM cont WHERE username = :username";
-        $stmt = $pdo -> prepare($query);
-        $stmt -> bindParam(':username', $username);
-        $stmt -> execute();
-        $results = $stmt -> fetchAll(PDO::FETCH_ASSOC);
-        $verificare = password_verify($password,$results[0]['password']);
-        if($verificare){
+    require_once 'firestore.php';
+    require_once 'link.php';
+    $db = new firebaseRDB($databaseURL);
+    $data = $db -> retrieve('cont');
+    $data = json_decode($data,1);
+    if(password_verify($password,$data['password']) && $data['username'] == $username){
             $_SESSION['username'] = $username;
-        }
-        $pdo = null;
-        $stmt = null;
-        header("Location: ./dashbord.php");
-    }catch(Exception $e){
-        die($e->getMessage());
+            header("Location: ./dashbord.php");
     }
+
 }else{
     header("Location: ../index.html");
 }

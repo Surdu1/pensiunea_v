@@ -1,25 +1,25 @@
 <?php
-require_once 'database.php';
-$sql = 'SELECT * FROM pret_normal';
-$stmt = $pdo -> prepare($sql);
-$stmt -> execute();
-$data = $stmt -> fetchAll();
-if($data){
+require_once 'firestore.php';
+require_once 'link.php';
+$db = new firebaseRDB($databaseURL);
 $pret = new stdClass();
-$pret -> camera = $data[0]['camera'];
-$pret -> cabana = $data[0]['cabana'];
-$sql = 'SELECT * FROM preturi';
-$stmt = $pdo -> prepare($sql);
-$stmt -> execute();
-$data = $stmt -> fetchAll();
-$newinceput = date("d.m.Y", strtotime($data[0]["inceput"]));
-$newfinal = date("d.m.Y", strtotime($data[0]["final"]));
-$pret -> inceput = $data[0]["inceput"];
-$pret -> final = $data[0]["final"];
-$pret -> camera_special = $data[0]['camera'];
-$pret -> cabana_special = $data[0]['cabana'];
-$pret -> special = "Pe perioada " . $newinceput . " - ". $newfinal  ." rezervarea pentru o camera este ". $data[0]["camera"] ."lei/zi si pentru toata pensiunea ". $data[0]["cabana"] ."lei/zi";
+$data = $db -> retrieve('pret_normal');
+$data = json_decode($data,1);
+if($data){
+$pret -> camera = $data['camera'];
+$pret -> cabana = $data['cabana'];
+}
+$data = $db -> retrieve('pret_special');
+$data = json_decode($data,1);
+if($data){
+$newinceput = date("d.m.Y", strtotime($data["inceput"]));
+$newfinal = date("d.m.Y", strtotime($data["final"]));
+$pret -> inceput = $data["inceput"];
+$pret -> final = $data["final"];
+$pret -> camera_special = $data['camera'];
+$pret -> cabana_special = $data['cabana'];
+$pret -> special = "Pe perioada " . $newinceput . " - ". $newfinal  ." rezervarea pentru o camera este ". $data["camera"] ."lei/zi si pentru toata pensiunea ". $data["cabana"] ."lei/zi";
+}
 $myJSON = json_encode($pret);
 echo $myJSON;
-}
 ?>
